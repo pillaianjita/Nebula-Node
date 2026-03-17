@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-  /* ── RESET & ROOT ─────────────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -39,7 +38,6 @@
     overflow-x: hidden;
   }
 
-  /* ── STAR FIELD BACKGROUND ────────────────────────────────────────── */
   #starfield {
     position: fixed; inset: 0; pointer-events: none; z-index: 0;
     overflow: hidden;
@@ -54,7 +52,6 @@
     50%      { opacity: var(--op, 0.7); transform: scale(1); }
   }
 
-  /* ── LAYOUT ───────────────────────────────────────────────────────── */
   #app {
     position: relative; z-index: 1;
     min-height: 100vh;
@@ -64,10 +61,7 @@
     gap: 20px;
   }
 
-  /* ── HEADER ───────────────────────────────────────────────────────── */
-  header {
-    text-align: center;
-  }
+  header { text-align: center; }
   header h1 {
     font-family: 'Orbitron', monospace;
     font-weight: 900;
@@ -77,7 +71,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: none;
     filter: drop-shadow(0 0 18px rgba(140,160,255,0.4));
   }
   header p {
@@ -85,7 +78,6 @@
     color: var(--dim); margin-top: 4px; text-transform: uppercase;
   }
 
-  /* ── STATUS BAR ───────────────────────────────────────────────────── */
   #status-bar {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -101,8 +93,8 @@
   }
   #status-bar.warn { color: #ffcc44; border-color: rgba(255,200,60,0.3); }
   #status-bar.ok   { color: #4ECDC4; border-color: rgba(78,205,196,0.3); }
+  #status-bar.sent { color: #a78bfa; border-color: rgba(167,139,250,0.3); }
 
-  /* ── SCOREBOARD ───────────────────────────────────────────────────── */
   #scoreboard {
     display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
   }
@@ -120,25 +112,20 @@
   .score-card.p1 { border-color: rgba(78,205,196,0.35); }
   .score-card.active.p0 { box-shadow: 0 0 24px var(--p0-glow); border-color: var(--p0); }
   .score-card.active.p1 { box-shadow: 0 0 24px var(--p1-glow); border-color: var(--p1); }
-
   .score-name {
     font-family: 'Orbitron', monospace;
-    font-size: 0.7rem; letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
   }
   .score-card.p0 .score-name { color: var(--p0); }
   .score-card.p1 .score-name { color: var(--p1); }
-
   .score-val {
     font-family: 'Orbitron', monospace;
     font-weight: 900; font-size: 2.2rem;
   }
   .score-card.p0 .score-val { color: #fff; text-shadow: 0 0 18px var(--p0-glow); }
   .score-card.p1 .score-val { color: #fff; text-shadow: 0 0 18px var(--p1-glow); }
-
   .score-label { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; }
 
-  /* ── BONUS INFO ───────────────────────────────────────────────────── */
   #bonus-info {
     font-size: 0.8rem;
     color: var(--bonus);
@@ -150,12 +137,10 @@
     padding: 7px 18px;
   }
 
-  /* ── GAME CONTAINER ───────────────────────────────────────────────── */
   #game-wrap {
     display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; justify-content: center;
   }
 
-  /* ── GRID ─────────────────────────────────────────────────────────── */
   #grid-container {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -163,11 +148,8 @@
     padding: 12px;
     box-shadow: 0 0 40px rgba(60,80,200,0.15), inset 0 0 60px rgba(0,0,30,0.4);
   }
-  #grid {
-    display: grid;
-    gap: 2px;
-    /* rows/cols set by JS */
-  }
+  #grid { display: grid; gap: 2px; }
+
   .cell {
     width: var(--cell); height: var(--cell);
     border-radius: 6px;
@@ -206,7 +188,6 @@
     100% { background: transparent; transform: scale(1); }
   }
 
-  /* ── PLAYER TOKENS ────────────────────────────────────────────────── */
   .player-token {
     position: absolute;
     width: 26px; height: 26px;
@@ -217,21 +198,18 @@
     font-weight: 700; font-size: 0.65rem;
     color: white;
     z-index: 10;
-    transition: none;
     pointer-events: none;
   }
   .player-token.p0 { background: var(--p0); box-shadow: 0 0 14px var(--p0-glow); }
   .player-token.p1 { background: var(--p1); box-shadow: 0 0 14px var(--p1-glow); }
 
-  /* ── CONTROLS PANEL ───────────────────────────────────────────────── */
   #controls-panel {
     display: flex; flex-direction: column; align-items: center; gap: 16px;
   }
   .controls-title {
     font-family: 'Orbitron', monospace;
     font-size: 0.65rem; letter-spacing: 0.2em;
-    color: var(--dim); text-transform: uppercase;
-    text-align: center;
+    color: var(--dim); text-transform: uppercase; text-align: center;
   }
   #dpad {
     display: grid;
@@ -248,23 +226,17 @@
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
-    user-select: none;
-    -webkit-user-select: none;
+    user-select: none; -webkit-user-select: none;
   }
-  .dpad-btn:hover {
-    background: rgba(100,140,255,0.2);
-    box-shadow: 0 0 14px var(--glow);
-  }
-  .dpad-btn:active, .dpad-btn.pressed {
-    transform: scale(0.9);
-    background: rgba(100,140,255,0.35);
-  }
+  .dpad-btn:hover { background: rgba(100,140,255,0.2); box-shadow: 0 0 14px var(--glow); }
+  .dpad-btn:active, .dpad-btn.pressed { transform: scale(0.9); background: rgba(100,140,255,0.35); }
+  .dpad-btn.waiting { opacity: 0.4; cursor: not-allowed; }
   .dpad-center { background: transparent; border-color: transparent; cursor: default; }
 
   .key-hint {
     font-size: 0.72rem; color: var(--dim); text-align: center; letter-spacing: 0.08em;
   }
-  .key-hint span { 
+  .key-hint span {
     display: inline-block;
     background: rgba(255,255,255,0.06);
     border: 1px solid var(--border);
@@ -274,7 +246,6 @@
     margin: 0 2px;
   }
 
-  /* ── LEGEND ───────────────────────────────────────────────────────── */
   .legend {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -288,15 +259,13 @@
   .legend-title {
     font-family: 'Orbitron', monospace;
     font-size: 0.6rem; letter-spacing: 0.2em;
-    color: var(--dim); text-transform: uppercase;
-    margin-bottom: 4px;
+    color: var(--dim); text-transform: uppercase; margin-bottom: 4px;
   }
   .legend-row { display: flex; align-items: center; gap: 8px; }
   .legend-icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
   .legend-desc { color: var(--text); }
   .legend-pts  { margin-left: auto; color: var(--dim); font-size: 0.7rem; }
 
-  /* ── GAME OVER OVERLAY ────────────────────────────────────────────── */
   #overlay {
     display: none;
     position: fixed; inset: 0; z-index: 100;
@@ -342,9 +311,7 @@
     display: flex; gap: 20px; justify-content: center;
   }
   .ov-score {
-    padding: 12px 24px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
+    padding: 12px 24px; border-radius: 10px; border: 1px solid var(--border);
   }
   .ov-score .name { font-size: 0.7rem; letter-spacing: 0.15em; margin-bottom: 4px; }
   .ov-score .pts  { font-family: 'Orbitron', monospace; font-weight: 700; font-size: 1.6rem; }
@@ -367,7 +334,6 @@
   #btn-restart:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(80,100,255,0.5); }
   #btn-restart:active { transform: translateY(0); }
 
-  /* ── RESPONSIVE ───────────────────────────────────────────────────── */
   @media (max-width: 700px) {
     :root { --cell: 28px; }
     .score-card { min-width: 120px; padding: 10px 16px; }
@@ -376,10 +342,8 @@
 </head>
 <body>
 
-<!-- Animated star field background -->
 <div id="starfield"></div>
 
-<!-- Game Over Overlay -->
 <div id="overlay">
   <div class="overlay-box">
     <div class="overlay-label">Game Over · The Galaxy Is Mapped</div>
@@ -398,7 +362,6 @@
   </div>
 </div>
 
-<!-- Main App -->
 <div id="app">
   <header>
     <h1>✦ NEBULA NODE ✦</h1>
@@ -407,7 +370,6 @@
 
   <div id="status-bar">Connecting to local client...</div>
 
-  <!-- Scoreboard -->
   <div id="scoreboard">
     <div class="score-card p0" id="card-p0">
       <div class="score-name">Voyager 1</div>
@@ -433,13 +395,13 @@
 
       <div id="dpad">
         <div></div>
-        <button class="dpad-btn" id="btn-up" data-dir="UP">▲</button>
+        <button class="dpad-btn" id="btn-up"    data-dir="UP">▲</button>
         <div></div>
-        <button class="dpad-btn" id="btn-left" data-dir="LEFT">◀</button>
+        <button class="dpad-btn" id="btn-left"  data-dir="LEFT">◀</button>
         <div class="dpad-btn dpad-center">✦</div>
         <button class="dpad-btn" id="btn-right" data-dir="RIGHT">▶</button>
         <div></div>
-        <button class="dpad-btn" id="btn-down" data-dir="DOWN">▼</button>
+        <button class="dpad-btn" id="btn-down"  data-dir="DOWN">▼</button>
         <div></div>
       </div>
 
@@ -449,7 +411,6 @@
         <span>↑</span><span>←</span><span>↓</span><span>→</span>
       </div>
 
-      <!-- Legend -->
       <div class="legend">
         <div class="legend-title">Galaxy Legend</div>
         <div class="legend-row">
@@ -457,7 +418,7 @@
           <span class="legend-desc">Star</span>
           <span class="legend-pts">+1 pt</span>
         </div>
-        <div class="legend-row" id="legend-bonus-row">
+        <div class="legend-row">
           <span class="legend-icon" id="legend-bonus-icon">💎</span>
           <span class="legend-desc" id="legend-bonus-name">Bonus Item</span>
           <span class="legend-pts">+3 pts</span>
@@ -469,7 +430,7 @@
         </div>
         <div class="legend-row">
           <span class="legend-icon" style="color:var(--p0);">●</span>
-          <span class="legend-desc" style="color:var(--p0);">Voyager 1 (You?)</span>
+          <span class="legend-desc" style="color:var(--p0);">Voyager 1</span>
         </div>
         <div class="legend-row">
           <span class="legend-icon" style="color:var(--p1);">●</span>
@@ -483,13 +444,15 @@
 </div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────────
+// ── CONFIG ─────────────────────────────────────────────────────────────────────
+// Always talk to this machine's own client.py
 const API = "http://127.0.0.1:8000";
-let myPid = null;
-let lastTurn = -1;
-let gameStarted = false;
 
-// ── STARFIELD ─────────────────────────────────────────────────────────────────
+let myPid       = null;
+let lastTurn    = -1;
+let moveSent    = false;   // ← KEY FIX: have we sent a move this turn?
+
+// ── STARFIELD ──────────────────────────────────────────────────────────────────
 (function buildStarField() {
   const sf = document.getElementById('starfield');
   for (let i = 0; i < 160; i++) {
@@ -507,9 +470,8 @@ let gameStarted = false;
   }
 })();
 
-// ── GRID BUILDER ──────────────────────────────────────────────────────────────
-let gridBuilt = false;
-let rows = 0, cols = 0;
+// ── GRID BUILDER ───────────────────────────────────────────────────────────────
+let gridBuilt = false, rows = 0, cols = 0;
 
 function buildGrid(r, c) {
   if (gridBuilt && rows === r && cols === c) return;
@@ -528,16 +490,13 @@ function buildGrid(r, c) {
   }
 }
 
-// ── RENDER STATE ──────────────────────────────────────────────────────────────
+// ── RENDER STATE ───────────────────────────────────────────────────────────────
 function renderState(g) {
   buildGrid(g.grid_rows, g.grid_cols);
 
-  // Clear all cells
   document.querySelectorAll('.cell').forEach(c => {
     c.className = 'cell';
     c.textContent = '';
-    c.style.cssText = '';
-    // remove aftercontent via class
   });
 
   // Stars
@@ -550,17 +509,13 @@ function renderState(g) {
   Object.entries(g.bonus_cells || {}).forEach(([key, val]) => {
     const [r, c] = key.split(',').map(Number);
     const el = document.getElementById(`cell-${r}-${c}`);
-    if (el) {
-      el.classList.add('has-bonus');
-      el.style.setProperty('--bonus-emoji', `"${val.emoji}"`);
-      el.textContent = val.emoji;
-    }
+    if (el) { el.classList.add('has-bonus'); el.textContent = val.emoji; }
   });
 
   // Explosions
   (g.explosions || []).forEach(([r, c]) => {
     const el = document.getElementById(`cell-${r}-${c}`);
-    if (el) { el.classList.add('exploding'); }
+    if (el) el.classList.add('exploding');
   });
 
   // Players
@@ -575,20 +530,17 @@ function renderState(g) {
 
   // Scores
   Object.values(g.players || {}).forEach(p => {
-    document.getElementById(`score-p${p.pid}`).textContent = p.score;
+    const el = document.getElementById(`score-p${p.pid}`);
+    if (el) el.textContent = p.score;
   });
 
-  // Active glow on your card
+  // Active card glow
   document.getElementById('card-p0').classList.remove('active');
   document.getElementById('card-p1').classList.remove('active');
-  if (myPid !== null) {
-    document.getElementById(`card-p${myPid}`).classList.add('active');
-  }
+  if (myPid !== null) document.getElementById(`card-p${myPid}`).classList.add('active');
 
-  // Turn counter
   document.getElementById('turn-count').textContent = `Turn: ${g.turn}`;
 
-  // Bonus info
   if (g.bonus_type) {
     document.getElementById('bonus-info').textContent =
       `Bonus: ${g.bonus_type.emoji} ${g.bonus_type.name} (×4 on the map, +3 pts each)`;
@@ -596,67 +548,96 @@ function renderState(g) {
     document.getElementById('legend-bonus-name').textContent = g.bonus_type.name;
   }
 
+  // ── KEY FIX: unlock input when a new turn arrives ──────────────────────────
+  if (g.turn !== lastTurn) {
+    lastTurn  = g.turn;
+    moveSent  = false;   // new turn → player can move again
+    setDpadEnabled(true);
+  }
+
   // Game over
   if (g.game_over) {
-    const ov = document.getElementById('overlay');
+    const ov  = document.getElementById('overlay');
     const ovW = document.getElementById('ov-winner');
     ov.classList.add('show');
     if (g.winner === 'TIE') {
-      ovW.textContent = '🌌 COSMIC TIE';
-      ovW.classList.add('tie');
+      ovW.textContent = '🌌 COSMIC TIE'; ovW.classList.add('tie');
     } else {
-      ovW.textContent = `🏆 ${g.winner} Wins!`;
-      ovW.classList.remove('tie');
+      ovW.textContent = `🏆 ${g.winner} Wins!`; ovW.classList.remove('tie');
     }
     Object.values(g.players || {}).forEach(p => {
-      document.getElementById(`ov-p${p.pid}`).textContent = p.score;
+      const el = document.getElementById(`ov-p${p.pid}`);
+      if (el) el.textContent = p.score;
     });
   }
 }
 
-// ── STATUS ────────────────────────────────────────────────────────────────────
+// ── STATUS ─────────────────────────────────────────────────────────────────────
 function setStatus(msg, cls) {
   const el = document.getElementById('status-bar');
   el.textContent = msg;
-  el.className = cls ? `${cls}` : '';
+  el.className = cls || '';
 }
 
-// ── POLL SERVER ───────────────────────────────────────────────────────────────
+// ── DPAD ENABLE / DISABLE ──────────────────────────────────────────────────────
+function setDpadEnabled(enabled) {
+  document.querySelectorAll('.dpad-btn[data-dir]').forEach(btn => {
+    btn.classList.toggle('waiting', !enabled);
+  });
+}
+
+// ── POLL ───────────────────────────────────────────────────────────────────────
 async function poll() {
   try {
-    const res = await fetch(`${API}/state`);
+    const res  = await fetch(`${API}/state`);
     const data = await res.json();
 
     if (!data.connected) {
-      setStatus('⚠ Not connected to server. Is client.py running?', 'warn');
+      setStatus('⚠ Not connected to server. Is server.py running?', 'warn');
       return;
     }
+
     if (data.pid !== null && myPid === null) myPid = data.pid;
 
     if (data.game && data.game.started) {
-      if (data.message) setStatus(data.message, 'ok');
-      else setStatus(`Connected as ${data.game.players[myPid]?.name || '?'} · Stars left: ${data.game.stars?.length ?? '?'}`, 'ok');
       document.getElementById('overlay').classList.remove('show');
       renderState(data.game);
+      if (!data.game.game_over) {
+        if (moveSent) {
+          setStatus(`Move sent — waiting for opponent...`, 'sent');
+        } else {
+          const name = data.game.players[myPid]?.name || '?';
+          const left = data.game.stars?.length ?? '?';
+          setStatus(`${name} · Stars left: ${left} · Your turn — make a move!`, 'ok');
+        }
+      }
     } else {
       setStatus(data.message || 'Waiting for game to start...', 'warn');
     }
   } catch (e) {
-    setStatus('⚠ Cannot reach client.py — make sure it\'s running on port 8000', 'warn');
+    setStatus('⚠ Cannot reach client.py on port 8000', 'warn');
   }
 }
 
-setInterval(poll, 200);  // Poll every 200ms
+setInterval(poll, 300);
 
-// ── MOVE ──────────────────────────────────────────────────────────────────────
+// ── SEND MOVE ──────────────────────────────────────────────────────────────────
 async function sendMove(dir) {
+  if (moveSent) return;           // already sent a move this turn — ignore
+  moveSent = true;
+  setDpadEnabled(false);          // grey out buttons until next turn
+
   try {
     await fetch(`${API}/move`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ direction: dir }),
     });
-  } catch (e) {}
+    setStatus(`Move sent (${dir}) — waiting for opponent...`, 'sent');
+  } catch (e) {
+    moveSent = false;             // if send failed, let them try again
+    setDpadEnabled(true);
+  }
 }
 
 // D-pad buttons
@@ -670,26 +651,31 @@ document.querySelectorAll('.dpad-btn[data-dir]').forEach(btn => {
 
 // Keyboard
 const keyMap = {
-  ArrowUp: 'UP', ArrowDown: 'DOWN', ArrowLeft: 'LEFT', ArrowRight: 'RIGHT',
-  w: 'UP', s: 'DOWN', a: 'LEFT', d: 'RIGHT',
-  W: 'UP', S: 'DOWN', A: 'LEFT', D: 'RIGHT',
+  ArrowUp:'UP', ArrowDown:'DOWN', ArrowLeft:'LEFT', ArrowRight:'RIGHT',
+  w:'UP', s:'DOWN', a:'LEFT', d:'RIGHT',
+  W:'UP', S:'DOWN', A:'LEFT', D:'RIGHT',
 };
 document.addEventListener('keydown', e => {
   const dir = keyMap[e.key];
-  if (dir) {
-    e.preventDefault();
-    sendMove(dir);
-    const btnId = { UP:'btn-up', DOWN:'btn-down', LEFT:'btn-left', RIGHT:'btn-right' }[dir];
-    const btn = document.getElementById(btnId);
-    if (btn) { btn.classList.add('pressed'); setTimeout(() => btn.classList.remove('pressed'), 150); }
-  }
+  if (!dir) return;
+  e.preventDefault();
+  sendMove(dir);
+  const ids = { UP:'btn-up', DOWN:'btn-down', LEFT:'btn-left', RIGHT:'btn-right' };
+  const btn = document.getElementById(ids[dir]);
+  if (btn) { btn.classList.add('pressed'); setTimeout(() => btn.classList.remove('pressed'), 150); }
 });
 
-// Restart button
+// Restart
 document.getElementById('btn-restart').addEventListener('click', async () => {
   document.getElementById('overlay').classList.remove('show');
+  moveSent = false;
+  setDpadEnabled(true);
   try {
-    await fetch(`${API}/restart`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    await fetch(`${API}/restart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    });
   } catch (e) {}
 });
 </script>
