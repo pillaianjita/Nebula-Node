@@ -338,6 +338,74 @@
     :root { --cell: 28px; }
     .score-card { min-width: 120px; padding: 10px 16px; }
   }
+
+  /* ── RULES PANEL ──────────────────────────────────────────────────── */
+  #rules-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 24px;
+    max-width: 700px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+  }
+  #rules-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+  }
+  #rules-toggle:hover { color: #a0c4ff; }
+  #rules-toggle .arrow { transition: transform 0.3s; font-size: 0.8rem; }
+  #rules-toggle.open .arrow { transform: rotate(180deg); }
+  #rules-body {
+    display: none;
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+  #rules-body.hidden { display: none; }
+  .rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .rule-icon { font-size: 1.3rem; min-width: 28px; text-align: center; }
+  .rule-text { line-height: 1.5; }
+  .rule-text strong { color: #a0c4ff; display: block; margin-bottom: 2px; font-size: 0.78rem; }
+  .rule-pts {
+    display: inline-block;
+    margin-top: 3px;
+    background: rgba(100,160,255,0.15);
+    border: 1px solid rgba(100,160,255,0.25);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 0.7rem;
+    color: #60a5fa;
+    font-family: 'Orbitron', monospace;
+  }
+  .rule-pts.green { background: rgba(78,205,196,0.15); border-color: rgba(78,205,196,0.3); color: #4ECDC4; }
+  .rule-pts.gold  { background: rgba(255,220,100,0.15); border-color: rgba(255,220,100,0.3); color: #FFE27A; }
+  .rule-pts.red   { background: rgba(255,107,107,0.15); border-color: rgba(255,107,107,0.3); color: #FF6B6B; }
+  @media (max-width: 600px) {
+    #rules-body { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -348,16 +416,7 @@
   <div class="overlay-box">
     <div class="overlay-label">Game Over · The Galaxy Is Mapped</div>
     <div class="overlay-winner" id="ov-winner">—</div>
-    <div class="overlay-scores">
-      <div class="ov-score p0">
-        <div class="name">VOYAGER 1</div>
-        <div class="pts" id="ov-p0">0</div>
-      </div>
-      <div class="ov-score p1">
-        <div class="name">VOYAGER 2</div>
-        <div class="pts" id="ov-p1">0</div>
-      </div>
-    </div>
+    <div class="overlay-scores" id="overlay-scores"></div>
     <button id="btn-restart">⟳ &nbsp; NEW GALAXY</button>
   </div>
 </div>
@@ -369,19 +428,16 @@
   </header>
 
   <div id="status-bar">Connecting to local client...</div>
-
-  <div id="scoreboard">
-    <div class="score-card p0" id="card-p0">
-      <div class="score-name">Voyager 1</div>
-      <div class="score-val" id="score-p0">0</div>
-      <div class="score-label">STARS CLAIMED</div>
+  <div id="lobby-panel" style="margin:8px auto; max-width:700px; border:1px solid rgba(255,255,255,0.12); background:rgba(8,12,28,0.9); border-radius:12px; padding:10px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center;">
+      <input id="name-input" placeholder="Enter your name" style="border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:#0b1230;color:white;padding:7px 10px;min-width:180px;" />
+      <button id="btn-join" style="border:none;border-radius:8px;padding:8px 14px;background:#0f63ff;color:white;cursor:pointer;">👥 Join Lobby</button>
+      <button id="btn-start-game" style="border:none;border-radius:8px;padding:8px 14px;background:#10b981;color:white;cursor:pointer;">▶ Start Game</button>
     </div>
-    <div class="score-card p1" id="card-p1">
-      <div class="score-name">Voyager 2</div>
-      <div class="score-val" id="score-p1">0</div>
-      <div class="score-label">STARS CLAIMED</div>
-    </div>
+    <div style="margin-top:8px; font-size:0.8rem; color:#bfc8ff; text-align:center;" id="lobby-status">Lobby: 0 players joined</div>
+    <div style="margin-top:4px; font-size:0.8rem; color:#d6e3ff; text-align:center;" id="lobby-names"></div>
   </div>
+  <div id="scoreboard"></div>
 
   <div id="bonus-info">Loading bonus type...</div>
 
@@ -443,14 +499,75 @@
   </div>
 </div>
 
+
+  <!-- Rules Panel -->
+  <div id="rules-panel">
+    <button id="rules-toggle" onclick="toggleRules()">
+      <span>📖 &nbsp; How to Play — Game Rules</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div id="rules-body" class="hidden">
+      <div class="rule-item">
+        <span class="rule-icon">★</span>
+        <div class="rule-text">
+          <strong>Capture a Star</strong>
+          Move your player onto a star cell to claim it.
+          <span class="rule-pts gold">+1 point</span>
+        </div>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon" id="rules-bonus-icon">💎</span>
+        <div class="rule-text">
+          <strong>Collect a Bonus Item</strong>
+          Land on a glowing bonus item for extra points!
+          <span class="rule-pts green">+3 points</span>
+        </div>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">💥</span>
+        <div class="rule-text">
+          <strong>Collision — Explosion!</strong>
+          Both players land on the same cell in the same turn — the item explodes and nobody scores.
+          <span class="rule-pts red">0 points</span>
+        </div>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">🎮</span>
+        <div class="rule-text">
+          <strong>Turn-Based Movement</strong>
+          Both players move simultaneously. Use WASD or Arrow Keys. Each turn, submit one move.
+        </div>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">🏆</span>
+        <div class="rule-text">
+          <strong>Win Condition</strong>
+          Game ends when all stars and bonus items are gone. Most points wins!
+        </div>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">🌌</span>
+        <div class="rule-text">
+          <strong>Galaxy Layout</strong>
+          30 stars + 4 bonus items scattered randomly. Voyager 1 starts top-left, Voyager 2 bottom-right.
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────────────────
 // Always talk to this machine's own client.py
-const API = "http://127.0.0.1:8000";
+const API = "http://" + window.location.hostname + ":8000";
 
-let myPid       = null;
-let lastTurn    = -1;
-let moveSent    = false;   // ← KEY FIX: have we sent a move this turn?
+// Unique session ID for this browser tab — lets client.py count active browsers
+const SID = Math.random().toString(36).slice(2);
+
+let myName = null;
+let myPid = null;
+let joinedLobby = false;
+let moveSent = false;
 
 // ── STARFIELD ──────────────────────────────────────────────────────────────────
 (function buildStarField() {
@@ -524,36 +641,41 @@ function renderState(g) {
     if (!el) return;
     const tok = document.createElement('div');
     tok.className = `player-token p${p.pid}`;
-    tok.textContent = p.pid === 0 ? 'V1' : 'V2';
+    tok.style.background = p.color;
+    tok.style.boxShadow = `0 0 14px ${p.color}88`;
+    tok.textContent = `V${p.pid+1}`;
     el.appendChild(tok);
   });
 
-  // Scores
+  // Rebuild scoreboard dynamically for any number of players
+  const sb = document.getElementById('scoreboard');
+  sb.innerHTML = '';
   Object.values(g.players || {}).forEach(p => {
-    const el = document.getElementById(`score-p${p.pid}`);
-    if (el) el.textContent = p.score;
+    const card = document.createElement('div');
+    card.className = `score-card p${p.pid}` + (p.pid === myPid ? ' active' : '');
+    card.id = `card-p${p.pid}`;
+    card.innerHTML = `
+      <div class="score-name" style="color:${p.color}">${p.name}</div>
+      <div class="score-val" id="score-p${p.pid}" style="text-shadow:0 0 18px ${p.color}88">${p.score}</div>
+      <div class="score-label">${p.pid === myPid ? '● YOU' : 'STARS CLAIMED'}</div>
+    `;
+    sb.appendChild(card);
   });
-
-  // Active card glow
-  document.getElementById('card-p0').classList.remove('active');
-  document.getElementById('card-p1').classList.remove('active');
-  if (myPid !== null) document.getElementById(`card-p${myPid}`).classList.add('active');
 
   document.getElementById('turn-count').textContent = `Turn: ${g.turn}`;
 
   if (g.bonus_type) {
     document.getElementById('bonus-info').textContent =
-      `Bonus: ${g.bonus_type.emoji} ${g.bonus_type.name} (×4 on the map, +3 pts each)`;
+      `Bonus this game: ${g.bonus_type.emoji} ${g.bonus_type.name}  ( +3 pts each)`;
     document.getElementById('legend-bonus-icon').textContent = g.bonus_type.emoji;
     document.getElementById('legend-bonus-name').textContent = g.bonus_type.name;
+    updateRulesBonus(g.bonus_type);
   }
 
-  // ── KEY FIX: unlock input when a new turn arrives ──────────────────────────
-  if (g.turn !== lastTurn) {
-    lastTurn  = g.turn;
-    moveSent  = false;   // new turn → player can move again
-    setDpadEnabled(true);
-  }
+  // Unlock input on every state update (moves are instant now)
+  moveSent = false;
+  const isActivePlayer = myPid !== null && (g.players || {})[myPid] !== undefined;
+  setDpadEnabled(isActivePlayer && !g.game_over);
 
   // Game over
   if (g.game_over) {
@@ -565,9 +687,13 @@ function renderState(g) {
     } else {
       ovW.textContent = `🏆 ${g.winner} Wins!`; ovW.classList.remove('tie');
     }
+    const ovScores = document.getElementById('overlay-scores');
+    ovScores.innerHTML = '';
     Object.values(g.players || {}).forEach(p => {
-      const el = document.getElementById(`ov-p${p.pid}`);
-      if (el) el.textContent = p.score;
+      const div = document.createElement('div');
+      div.className = `ov-score p${p.pid}`;
+      div.innerHTML = `<div class="name" style="color:${p.color}">${p.name}</div><div class="pts">${p.score}</div>`;
+      ovScores.appendChild(div);
     });
   }
 }
@@ -589,7 +715,7 @@ function setDpadEnabled(enabled) {
 // ── POLL ───────────────────────────────────────────────────────────────────────
 async function poll() {
   try {
-    const res  = await fetch(`${API}/state`);
+    const res  = await fetch(`${API}/state?sid=${SID}`);
     const data = await res.json();
 
     if (!data.connected) {
@@ -597,13 +723,24 @@ async function poll() {
       return;
     }
 
-    if (data.pid !== null && myPid === null) myPid = data.pid;
+    if (data.pid !== null) myPid = data.pid;
+
+    if (data.lobby) {
+      const joined = data.lobby.some(p => p.sid === SID);
+      joinedLobby = joined;
+      const names = data.lobby.map((p, i) => `${i+1}. ${p.name}${p.pid !== null ? ' (P'+(p.pid+1)+')' : ''}`).join(' • ');
+      document.getElementById('lobby-status').textContent = `Lobby: ${data.lobby.length} joined`;
+      document.getElementById('lobby-names').textContent = names;
+    }
 
     if (data.game && data.game.started) {
+      document.getElementById('lobby-panel').style.display = 'none';
       document.getElementById('overlay').classList.remove('show');
       renderState(data.game);
       if (!data.game.game_over) {
-        if (moveSent) {
+        if (myPid === null) {
+          setStatus('👀 Spectator mode: game in progress.', 'warn');
+        } else if (moveSent) {
           setStatus(`Move sent — waiting for opponent...`, 'sent');
         } else {
           const name = data.game.players[myPid]?.name || '?';
@@ -612,12 +749,60 @@ async function poll() {
         }
       }
     } else {
-      setStatus(data.message || 'Waiting for game to start...', 'warn');
+      document.getElementById('lobby-panel').style.display = 'block';
+      setDpadEnabled(false);
+      if (joinedLobby) {
+        setStatus(`✅ ${myName || 'Player'} in lobby. Waiting to start.`, 'ok');
+      } else {
+        setStatus('Enter name and Join Lobby to play.', 'warn');
+      }
     }
   } catch (e) {
     setStatus('⚠ Cannot reach client.py on port 8000', 'warn');
   }
 }
+
+const startBtn = document.getElementById('btn-start-game');
+startBtn.addEventListener('click', async () => {
+  try {
+    const res = await fetch(`${API}/start?sid=${SID}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !(data.ok ?? false)) {
+      setStatus(`⚠ ${data.error || 'Cannot start game yet. Need 2+ players.'}`, 'warn');
+      return;
+    }
+    setStatus(`✅ Game starting with ${data.count} players...`, 'ok');
+  } catch (e) {
+    setStatus('⚠ Start request failed.', 'warn');
+  }
+});
+
+const joinBtn = document.getElementById('btn-join');
+joinBtn.addEventListener('click', async () => {
+  const nameInput = document.getElementById('name-input');
+  const name = nameInput.value.trim();
+  if (!name) {
+    setStatus('⚠ Enter your name before joining.', 'warn');
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/join?sid=${SID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !(data.ok ?? false)) {
+      setStatus(`⚠ ${data.error || 'Join failed.'}`, 'warn');
+      return;
+    }
+    myName = name;
+    joinedLobby = true;
+    setStatus(`✅ Joined lobby as ${name}.`, 'ok');
+  } catch (e) {
+    setStatus('⚠ Join request failed.', 'warn');
+  }
+});
 
 setInterval(poll, 300);
 
@@ -628,15 +813,20 @@ async function sendMove(dir) {
   setDpadEnabled(false);          // grey out buttons until next turn
 
   try {
-    await fetch(`${API}/move`, {
+    const res = await fetch(`${API}/move?sid=${SID}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ direction: dir }),
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !(data.ok ?? true)) {
+      throw new Error(data.error || 'move failed');
+    }
     setStatus(`Move sent (${dir}) — waiting for opponent...`, 'sent');
   } catch (e) {
     moveSent = false;             // if send failed, let them try again
     setDpadEnabled(true);
+    setStatus('⚠ Move failed. Are you a spectator?', 'warn');
   }
 }
 
@@ -656,9 +846,11 @@ const keyMap = {
   W:'UP', S:'DOWN', A:'LEFT', D:'RIGHT',
 };
 document.addEventListener('keydown', e => {
+  if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
   const dir = keyMap[e.key];
   if (!dir) return;
   e.preventDefault();
+  if (document.getElementById('lobby-panel').style.display !== 'none') return;
   sendMove(dir);
   const ids = { UP:'btn-up', DOWN:'btn-down', LEFT:'btn-left', RIGHT:'btn-right' };
   const btn = document.getElementById(ids[dir]);
@@ -669,15 +861,34 @@ document.addEventListener('keydown', e => {
 document.getElementById('btn-restart').addEventListener('click', async () => {
   document.getElementById('overlay').classList.remove('show');
   moveSent = false;
-  setDpadEnabled(true);
+  setDpadEnabled(false);
   try {
-    await fetch(`${API}/restart`, {
+    await fetch(`${API}/restart?sid=${SID}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: '{}',
     });
-  } catch (e) {}
+    document.getElementById('lobby-panel').style.display = 'block';
+    setStatus('Enter your name and join lobby to start a new game.', 'ok');
+  } catch (e) {
+    setStatus('⚠ Restart failed.', 'warn');
+  }
 });
+
+// ── RULES TOGGLE ───────────────────────────────────────────────────────────────
+function toggleRules() {
+  const body   = document.getElementById('rules-body');
+  const btn    = document.getElementById('rules-toggle');
+  const hidden = body.classList.toggle('hidden');
+  btn.classList.toggle('open', !hidden);
+}
+
+// Update bonus icon in rules when game starts
+function updateRulesBonus(bonusType) {
+  const el = document.getElementById('rules-bonus-icon');
+  if (el && bonusType) el.textContent = bonusType.emoji;
+}
+
 </script>
 </body>
 </html>
